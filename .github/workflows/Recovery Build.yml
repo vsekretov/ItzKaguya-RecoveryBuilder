@@ -43,7 +43,7 @@ on:
         required: false
 
 jobs:
-  build:
+  Build:
     if: github.event.repository.owner.id == github.event.sender.id
     runs-on: ubuntu-18.04
     # You can use either of the ubuntu-18.04 or ubuntu-20.04 runner
@@ -121,6 +121,11 @@ jobs:
         echo "If you're building SkyHawk or other recovery that supports notch devices please modify the offsets in the BoardConfig.mk by doing your own fork of the device tree ;)"
       working-directory: ${{ steps.pwd.outputs.pwd }}
 
+    - name: Chmod a custom mkbootimg
+      run: |
+        chmod +x ${{ github.event.inputs.DEVICE_PATH }}/mkbootimg
+      working-directory: ${{ steps.pwd.outputs.pwd }}
+      
     - name: Clone common tree
       if: |
         github.event.inputs.COMMON_TREE_URL != null
@@ -169,6 +174,7 @@ jobs:
       # SHRP should be supported in there.
         files: |
           workspace/out/target/product/${{ github.event.inputs.DEVICE_NAME }}/${{ github.event.inputs.BUILD_TARGET }}.img
+          workspace/out/target/product/${{ github.event.inputs.DEVICE_NAME }}/${{ github.event.inputs.BUILD_TARGET }}.tar
           workspace/out/target/product/${{ github.event.inputs.DEVICE_NAME }}/SHRP_**
         name: ${{ github.event.inputs.DEVICE_NAME }}-${{ github.event.inputs.MANIFEST_BRANCH }}_${{ github.run_id }}
         tag_name: ${{ github.event.inputs.MANIFEST_BRANCH }}_${{ github.run_id }}

@@ -1,4 +1,4 @@
-name: Recovery Build
+name: Build Recovery
 
 on:
   workflow_dispatch:
@@ -75,6 +75,12 @@ jobs:
         sudo apt -y upgrade
         sudo apt -y install gperf gcc-multilib gcc-10-multilib g++-multilib g++-10-multilib libc6-dev lib32ncurses5-dev x11proto-core-dev libx11-dev tree lib32z-dev libgl1-mesa-dev libxml2-utils xsltproc bc ccache lib32readline-dev lib32z1-dev liblz4-tool libncurses5-dev libsdl1.2-dev libwxgtk3.0-dev libxml2 lzop pngcrush schedtool squashfs-tools imagemagick libbz2-dev lzma ncftp qemu-user-static libstdc++-10-dev python
 
+    - name: Install Python
+      run: |
+        sudo apt install software-properties-common -y
+        sudo add-apt-repository ppa:deadsnakes/ppa -y
+        sudo apt install python3.8 -y
+
     - name: Install OpenJDK
       uses: actions/setup-java@v3
       with:
@@ -105,8 +111,8 @@ jobs:
         mkdir workspace
         cd workspace
         echo "::set-output name=pwd::$(pwd)"
-        git config --global user.name "Captain Throwback"
-        git config --global user.email "captainthrowback@hotmail.com"
+        git config --global user.name "Zillion"
+        git config --global user.email "zillion@example.com"
         repo init --depth=1 -u ${{ github.event.inputs.MANIFEST_URL }} -b ${{ github.event.inputs.MANIFEST_BRANCH }}
       id: pwd
           
@@ -160,27 +166,47 @@ jobs:
         source build/envsetup.sh
         repopick 5405 5540
       working-directory: ${{ steps.pwd.outputs.pwd }}
-
+      
+    - name: Getting AVBTool
+      run: |
+        mkdir out
+        mkdir out/host
+        mkdir out/host/linux-x86
+        mkdir out/host/linux-x86/bin
+        wget -P out/host/linux-x86/bin https://raw.githubusercontent.com/Galaxy-MT6768/Galaxy_Recovery-Builder/main/files/bin/avbtool
+        chmod 777 out/host/linux-x86/bin/avbtool
+        ls out/host/linux-x86/bin/avbtool
+      working-directory: ${{ steps.pwd.outputs.pwd }}
+      
     - name: Building recovery
       run: |
         source build/envsetup.sh
         export ALLOW_MISSING_DEPENDENCIES=true
-        lunch ${{ github.event.inputs.MAKEFILE_NAME }}-eng && make clean && make ${{ github.event.inputs.BUILD_TARGET }}image -j$(nproc --all)
+        lunch ${{ github.event.inputs.MAKEFILE_NAME }}-eng && make ${{ github.event.inputs.BUILD_TARGET }}image -j$(nproc --all)
       working-directory: ${{ steps.pwd.outputs.pwd }}
-
+      
+    - name: Check AVB info
+      run: |
+        wget https://raw.githubusercontent.com/Galaxy-MT6768/Galaxy_Recovery-Builder/main/files/avbtool.py
+        python3 avbtool.py info_image --image out/target/product/${{ github.event.inputs.DEVICE_NAME }}/${{ github.event.inputs.BUILD_TARGET }}.img
+        python3 avbtool.py info_image --image out/target/product/${{ github.event.inputs.DEVICE_NAME }}/${{ github.event.inputs.BUILD_TARGET }}.img > image_info
+      working-directory: ${{ steps.pwd.outputs.pwd }}
+      
     - name: Upload to Release
       uses: softprops/action-gh-release@v1
       with:
       # SHRP should be supported in there.
         files: |
+          workspace/image_info
           workspace/out/target/product/${{ github.event.inputs.DEVICE_NAME }}/${{ github.event.inputs.BUILD_TARGET }}.img
           workspace/out/target/product/${{ github.event.inputs.DEVICE_NAME }}/${{ github.event.inputs.BUILD_TARGET }}.tar
           workspace/out/target/product/${{ github.event.inputs.DEVICE_NAME }}/SHRP_**
-        name: ${{ github.event.inputs.DEVICE_NAME }}-${{ github.event.inputs.MANIFEST_BRANCH }}_${{ github.run_id }}
-        tag_name: ${{ github.event.inputs.MANIFEST_BRANCH }}_${{ github.run_id }}
+        name: ${{ github.event.inputs.DEVICE_NAME }}_${{ github.event.inputs.MANIFEST_BRANCH }}
+        tag_name: ${{ github.run_id }}
         body: |
-          Manifest: ${{ github.event.inputs.MANIFEST_BRANCH }}
-          Device: Galaxy ${{ github.event.inputs.DEVICE_NAME }}
-          Target: ${{ github.event.inputs.BUILD_TARGET }}.img
+          ``${{ github.event.inputs.BUILD_TARGET }}.img``
+          Manifest: [${{ github.event.inputs.MANIFEST_BRANCH }}](${{ github.event.inputs.MANIFEST_URL }})
+          Device: [Galaxy ${{ github.event.inputs.DEVICE_NAME }}_${{ github.event.inputs.DEVICE_TREE_BRANCH }}](${{ github.event.inputs.DEVICE_TREE_URL }})
+          Image_Info: Image_Info file, open it with any text editor.
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

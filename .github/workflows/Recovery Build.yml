@@ -175,6 +175,7 @@ jobs:
       
     - name: Getting AVBTool
       run: |
+        rm -rf out
         mkdir out
         mkdir out/host
         mkdir out/host/linux-x86

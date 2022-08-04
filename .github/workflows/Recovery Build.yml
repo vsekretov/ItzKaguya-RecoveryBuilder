@@ -121,6 +121,12 @@ jobs:
         repo sync -j$(nproc --all) --force-sync
       working-directory: workspace
       
+    - name: Make it Clean
+      run: |
+        source build/envsetup.sh
+        make clean
+      working-directory: workspace
+      
     - name: Clone device tree
       run: |
         git clone ${{ github.event.inputs.DEVICE_TREE_URL }} -b ${{ github.event.inputs.DEVICE_TREE_BRANCH }} ./${{ github.event.inputs.DEVICE_PATH }}

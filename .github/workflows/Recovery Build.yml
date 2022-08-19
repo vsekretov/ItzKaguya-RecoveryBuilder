@@ -6,31 +6,31 @@ on:
       MANIFEST_URL:
         description: 'MANIFEST_URL (if using SSH keys, use git@github.com:repo URL format)'
         required: true
-        default: 'https://github.com/minimal-manifest-twrp/platform_manifest_twrp_aosp.git'
+        default: 'https://github.com/SHRP/manifest.git'
       MANIFEST_BRANCH:
         description: 'MANIFEST_BRANCH'
         required: true
-        default: 'twrp-11'
+        default: 'v3_9.0'
       DEVICE_TREE_URL:
         description: 'DEVICE_TREE_URL'
         required: true
-        default: 'https://github.com/Galaxy-MT6768/android_device_samsung_a31nsxx'
+        default: 'https://github.com/MizuNotCool/twrp_device_samsung_a10s'
       DEVICE_TREE_BRANCH:
         description: 'DEVICE_TREE_BRANCH'
         required: true
-        default: 'android-12'
+        default: 'master'
       DEVICE_PATH:
         description: 'DEVICE_PATH'
         required: true
-        default: 'device/samsung/a31'
+        default: 'device/samsung/a10s'
       DEVICE_NAME:
         description: 'DEVICE_NAME'
         required: true
-        default: 'a31'
+        default: 'a10s'
       MAKEFILE_NAME:
         description: 'MAKEFILE_NAME'
         required: true
-        default: 'twrp_a31'
+        default: 'omni_a10s'
       BUILD_TARGET:
         description: 'BUILD_TARGET'
         required: true
@@ -111,8 +111,8 @@ jobs:
         mkdir workspace
         cd workspace
         echo "::set-output name=pwd::$(pwd)"
-        git config --global user.name "Zillion"
-        git config --global user.email "zillion@example.com"
+        git config --global user.name "ItzKaguya"
+        git config --global user.email "admin@itzkaguya.net"
         repo init --depth=1 -u ${{ github.event.inputs.MANIFEST_URL }} -b ${{ github.event.inputs.MANIFEST_BRANCH }}
       id: pwd
           

@@ -187,6 +187,9 @@ jobs:
       
     - name: Building recovery
       run: |
+        wget https://raw.githubusercontent.com/MizuNotCool/ItzKaguya-RecoveryBuilder/main/ofox-flags.sh
+        chmod +x ofox-flags.sh
+        sh ofox-flags.sh
         source build/envsetup.sh
         export ALLOW_MISSING_DEPENDENCIES=true
         export USE_CCACHE="1"

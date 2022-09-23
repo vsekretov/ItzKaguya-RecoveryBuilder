@@ -6,31 +6,31 @@ on:
       MANIFEST_URL:
         description: 'MANIFEST_URL (if using SSH keys, use git@github.com:repo URL format)'
         required: true
-        default: 'https://github.com/minimal-manifest-twrp/platform_manifest_twrp_omni.git'
+        default: 'https://github.com/SHRP/manifest.git'
       MANIFEST_BRANCH:
         description: 'MANIFEST_BRANCH'
         required: true
-        default: 'twrp-9.0'
+        default: 'v3_9.0'
       DEVICE_TREE_URL:
         description: 'DEVICE_TREE_URL'
         required: true
-        default: 'https://github.com/MizuNotCool/recovery_device_samsung_a10s'
+        default: 'https://github.com/samsungexynos7885/android_device_samsung_a7y18lte'
       DEVICE_TREE_BRANCH:
         description: 'DEVICE_TREE_BRANCH'
         required: true
-        default: 'twrp'
+        default: 'shrp'
       DEVICE_PATH:
         description: 'DEVICE_PATH'
         required: true
-        default: 'device/samsung/a10s'
+        default: 'device/samsung/a7y18lte'
       DEVICE_NAME:
         description: 'DEVICE_NAME'
         required: true
-        default: 'a10s'
+        default: 'a7y18lte'
       MAKEFILE_NAME:
         description: 'MAKEFILE_NAME'
         required: true
-        default: 'omni_a10s'
+        default: 'omni_a7y18lte'
       BUILD_TARGET:
         description: 'BUILD_TARGET'
         required: true

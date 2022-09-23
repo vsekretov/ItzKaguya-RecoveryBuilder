@@ -1,4 +1,4 @@
-name: Build Recovery
+name: Build Recovery (without mkbootimg)
 
 on:
   workflow_dispatch:

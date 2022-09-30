@@ -6,7 +6,7 @@ on:
       MANIFEST_URL:
         description: 'MANIFEST_URL (if using SSH keys, use git@github.com:repo URL format)'
         required: true
-        default: 'https://gitlab.com/OrangeFox/Manifest.git'
+        default: 'git@gitlab.com:OrangeFox/sync.git'
       MANIFEST_BRANCH:
         description: 'MANIFEST_BRANCH'
         required: true
@@ -14,7 +14,7 @@ on:
       DEVICE_TREE_URL:
         description: 'DEVICE_TREE_URL'
         required: true
-        default: 'https://github.com/MizuNotCool/twrp_device_samsung_a10s'
+        default: 'https://github.com/vsekretov/twrp-device-kg7n'
       DEVICE_TREE_BRANCH:
         description: 'DEVICE_TREE_BRANCH'
         required: true
@@ -22,19 +22,19 @@ on:
       DEVICE_PATH:
         description: 'DEVICE_PATH'
         required: true
-        default: 'device/samsung/a10s'
+        default: 'device/tecno/KG7n'
       DEVICE_NAME:
         description: 'DEVICE_NAME'
         required: true
-        default: 'a10s'
+        default: 'KG7n'
       MAKEFILE_NAME:
         description: 'MAKEFILE_NAME'
         required: true
-        default: 'omni_a10s'
+        default: 'omni_KG7n'
       BUILD_TARGET:
         description: 'BUILD_TARGET'
         required: true
-        default: 'recovery'
+        default: 'boot'
       COMMON_TREE_URL:
         description: 'COMMON_TREE_URL (if no common tree, leave blank)'
         required: false
@@ -113,14 +113,19 @@ jobs:
         echo "::set-output name=pwd::$(pwd)"
         git config --global user.name "ItzKaguya"
         git config --global user.email "admin@itzkaguya.net"
-        repo init --depth=1 -u ${{ github.event.inputs.MANIFEST_URL }} -b ${{ github.event.inputs.MANIFEST_BRANCH }}
+        cd ~
+        sudo apt install git aria2 -y
+        git clone https://gitlab.com/OrangeFox/misc/scripts
+        cd scripts
+        sudo bash setup/android_build_env.sh
+        sudo bash setup/install_android_sdk.sh
+        mkdir ~/OrangeFox_sync
+        cd ~/OrangeFox_sync
+        git clone https://gitlab.com/OrangeFox/sync.git
+        cd ~/OrangeFox_sync/sync/
+        ./orangefox_sync.sh --branch 11.0 --path ~/fox_11.0
       id: pwd
           
-    - name: Repo Sync
-      run: |
-        repo sync -j$(nproc --all) --force-sync
-      working-directory: workspace
-      
     - name: Make it Clean
       run: |
         source build/envsetup.sh
@@ -129,6 +134,7 @@ jobs:
       
     - name: Clone device tree
       run: |
+        cd ~/fox_11.0
         git clone ${{ github.event.inputs.DEVICE_TREE_URL }} -b ${{ github.event.inputs.DEVICE_TREE_BRANCH }} ./${{ github.event.inputs.DEVICE_PATH }}
         echo "If you're building SkyHawk or other recovery that supports notch devices please modify the offsets in the BoardConfig.mk by doing your own fork of the device tree ;)"
       working-directory: ${{ steps.pwd.outputs.pwd }}

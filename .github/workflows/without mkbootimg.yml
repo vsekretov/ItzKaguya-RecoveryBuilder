@@ -14,7 +14,7 @@ on:
       DEVICE_TREE_URL:
         description: 'DEVICE_TREE_URL'
         required: true
-        default: 'https://github.com/samsungexynos7885/android_device_samsung_a7y18lte'
+        default: 'https://github.com/vsekretov/twrp_KG7n_but_forked'
       DEVICE_TREE_BRANCH:
         description: 'DEVICE_TREE_BRANCH'
         required: true
@@ -22,19 +22,19 @@ on:
       DEVICE_PATH:
         description: 'DEVICE_PATH'
         required: true
-        default: 'device/samsung/a7y18lte'
+        default: 'device/tecno/KG7n'
       DEVICE_NAME:
         description: 'DEVICE_NAME'
         required: true
-        default: 'a7y18lte'
+        default: 'KG7n'
       MAKEFILE_NAME:
         description: 'MAKEFILE_NAME'
         required: true
-        default: 'omni_a7y18lte'
+        default: 'omni_KG7n'
       BUILD_TARGET:
         description: 'BUILD_TARGET'
         required: true
-        default: 'recovery'
+        default: 'boot'
       COMMON_TREE_URL:
         description: 'COMMON_TREE_URL (if no common tree, leave blank)'
         required: false
